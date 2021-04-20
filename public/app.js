@@ -1,3 +1,5 @@
+const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+
 let db;
 // create a new db request for a "budget" database.
 const request = indexedDB.open("budget", 1);
@@ -17,6 +19,7 @@ request.onsuccess = function(event) {
   }
 };
 
+
 request.onerror = function(event) {
   console.log("Woops! " + event.target.errorCode);
 };
@@ -30,7 +33,7 @@ function saveRecord(record) {
 
   // add record to your store with add method.
   store.add(record);
-}
+};
 
 function checkDatabase() {
   // open a transaction on your pending db
@@ -52,6 +55,9 @@ function checkDatabase() {
       })
       .then(response => response.json())
       .then(() => {
+        if (serverResponse.message) {
+            throw new Error(serverResponse);
+        }
         // if successful, open a transaction on your pending db
         const transaction = db.transaction(["pending"], "readwrite");
 
@@ -60,9 +66,11 @@ function checkDatabase() {
 
         // clear all items in your store
         store.clear();
-      });
+      }).catch(err => {
+          console.log(err);
+      })
     }
-  };
+  }
 }
 
 // listen for app coming back online
