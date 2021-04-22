@@ -55,9 +55,6 @@ function checkDatabase() {
       })
       .then(response => response.json())
       .then(() => {
-        if (serverResponse.message) {
-            throw new Error(serverResponse);
-        }
         // if successful, open a transaction on your pending db
         const transaction = db.transaction(["pending"], "readwrite");
 
